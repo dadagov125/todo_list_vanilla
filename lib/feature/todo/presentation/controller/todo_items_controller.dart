@@ -1,14 +1,18 @@
+import 'dart:math';
+
 import 'package:todo_list/core/core.dart';
 import 'package:todo_list/feature/todo/todo.dart';
 
 final List<TodoItem> _todoItems = [
   TodoItem(
+    id: 1,
     name: 'name3',
     description: 'description 233333',
     createdAt: DateTime.now(),
     attachments: ['attachment1', 'attachment2'],
   ),
   TodoItem(
+    id: 2,
     name: 'name2',
     description: 'description2',
     createdAt: DateTime.now().subtract(
@@ -17,6 +21,7 @@ final List<TodoItem> _todoItems = [
     attachments: [],
   ),
   TodoItem(
+    id: 3,
     name: 'name3 sd sd sd sd fs df sd fs df sdfasdfsdfasdfa'
         'sdfasdfsadfsad'
         ' fsdafasdfsadf sadfasdf sadfsadf sadfsadfsdaf ',
@@ -55,7 +60,10 @@ class TodoItemsController extends AsyncStateController<TodoList> {
         setValue(AsyncS.loading(prevState));
         await Future.delayed(const Duration(seconds: 2));
 
+        final random = Random();
+        final id = random.nextInt(1000000 - 1000) + 1000;
         final newItem = TodoItem(
+          id: id,
           name: name,
           description: '',
           createdAt: DateTime.now(),

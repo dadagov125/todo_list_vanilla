@@ -28,6 +28,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
   }
 
   void _createItem() {
+    FocusManager.instance.primaryFocus?.unfocus();
     _itemsController.addNewItem(_controller.text);
     _controller.clear();
   }
@@ -80,6 +81,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
   }
 
   Widget _getListTile(TodoItem todoItem) => ListTile(
+        key: ValueKey(todoItem.id),
         title: Text(
           todoItem.name,
           maxLines: 1,
@@ -149,15 +151,17 @@ class _TodoListScreenState extends State<TodoListScreen> {
                         Flexible(
                           child: TextField(
                             enabled: !isLoading,
+                            textInputAction: TextInputAction.send,
                             controller: _controller,
                             decoration: const InputDecoration(
                               hintText: 'Add new todo',
                             ),
+                            onSubmitted: (_) => _createItem(),
                           ),
                         ),
                         IconButton(
                           onPressed: !isLoading ? _createItem : null,
-                          icon: const Icon(Icons.add),
+                          icon: const Icon(Icons.send),
                         ),
                       ],
                     ),
