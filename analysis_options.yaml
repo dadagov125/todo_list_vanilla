@@ -3,6 +3,7 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   errors:
     todo: ignore
+
     invalid_annotation_target: ignore
     invalid_use_of_protected_member: error
     always_use_package_imports: warning
@@ -54,6 +55,7 @@ analyzer:
     unnecessary_brace_in_string_interps: warning
     non_exhaustive_switch_expression: warning
     non_exhaustive_switch_statement: warning
+    prefer_expression_function_bodies: warning
 
   exclude:
     - test/
@@ -115,3 +117,4 @@ linter:
     - unnecessary_this
     - prefer_const_constructors
     - unnecessary_brace_in_string_interps
+    - prefer_expression_function_bodies
