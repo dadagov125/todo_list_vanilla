@@ -32,46 +32,43 @@ sealed class AsyncS<T> {
   bool get isError => this is ErrorS<T>;
 
   R map<R>({
-    required R Function(InitialS<R>) initial,
-    required R Function(LoadingS<R>) loading,
-    required R Function(LoadedS<R>) loaded,
-    required R Function(ErrorS<R>) error,
+    required R Function(InitialS<T>) initial,
+    required R Function(LoadingS<T>) loading,
+    required R Function(LoadedS<T>) loaded,
+    required R Function(ErrorS<T>) error,
   }) =>
       switch (this) {
-        final InitialS<R> state => initial(state),
-        final LoadingS<R> state => loading(state),
-        final LoadedS<R> state => loaded(state),
-        final ErrorS<R> state => error(state),
-        _ => throw UnimplementedError(),
+        final InitialS<T> state => initial(state),
+        final LoadingS<T> state => loading(state),
+        final LoadedS<T> state => loaded(state),
+        final ErrorS<T> state => error(state),
       };
 
   R maybeMap<R>({
-    required R Function(InitialS<R>)? initial,
-    required R Function(LoadingS<R>)? loading,
-    required R Function(LoadedS<R>)? loaded,
-    required R Function(ErrorS<R>)? error,
     required R Function() orElse,
+    R Function(InitialS<T>)? initial,
+    R Function(LoadingS<T>)? loading,
+    R Function(LoadedS<T>)? loaded,
+    R Function(ErrorS<T>)? error,
   }) =>
       switch (this) {
-        final InitialS<R> state => initial?.call(state) ?? orElse(),
-        final LoadingS<R> state => loading?.call(state) ?? orElse(),
-        final LoadedS<R> state => loaded?.call(state) ?? orElse(),
-        final ErrorS<R> state => error?.call(state) ?? orElse(),
-        _ => orElse(),
+        final InitialS<T> state => initial?.call(state) ?? orElse(),
+        final LoadingS<T> state => loading?.call(state) ?? orElse(),
+        final LoadedS<T> state => loaded?.call(state) ?? orElse(),
+        final ErrorS<T> state => error?.call(state) ?? orElse(),
       };
 
   R? mapOrNull<R>({
-    R Function(InitialS<R>)? initial,
-    R Function(LoadingS<R>)? loading,
-    R Function(LoadedS<R>)? loaded,
-    R Function(ErrorS<R>)? error,
+    R Function(InitialS<T>)? initial,
+    R Function(LoadingS<T>)? loading,
+    R Function(LoadedS<T>)? loaded,
+    R Function(ErrorS<T>)? error,
   }) =>
       switch (this) {
-        final InitialS<R> state => initial?.call(state),
-        final LoadingS<R> state => loading?.call(state),
-        final LoadedS<R> state => loaded?.call(state),
-        final ErrorS<R> state => error?.call(state),
-        _ => null,
+        final InitialS<T> state => initial?.call(state),
+        final LoadingS<T> state => loading?.call(state),
+        final LoadedS<T> state => loaded?.call(state),
+        final ErrorS<T> state => error?.call(state),
       };
 }
 

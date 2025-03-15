@@ -11,6 +11,19 @@ class TodoItem {
   final DateTime createdAt;
   final List<String> attachments;
 
+  TodoItem copyWith({
+    String? name,
+    String? description,
+    DateTime? createdAt,
+    List<String>? attachments,
+  }) =>
+      TodoItem(
+        name: name ?? this.name,
+        description: description ?? this.description,
+        createdAt: createdAt ?? this.createdAt,
+        attachments: attachments ?? this.attachments,
+      );
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
