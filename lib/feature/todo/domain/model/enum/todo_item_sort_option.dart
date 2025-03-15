@@ -1,0 +1,4 @@
+enum TodoItemSortOption {
+  date,
+  name,
+}
