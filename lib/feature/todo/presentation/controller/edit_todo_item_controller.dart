@@ -135,9 +135,9 @@ class EditTodoItemControllerScope extends StatefulWidget {
   }) {
     final notifier = listen
         ? context.dependOnInheritedWidgetOfExactType<
-            _InheiretedEditTodoItemController>()
+            _InheritedEditTodoItemController>()
         : context
-            .findAncestorWidgetOfExactType<_InheiretedEditTodoItemController>();
+            .findAncestorWidgetOfExactType<_InheritedEditTodoItemController>();
 
     assert(notifier != null, 'No EditTodoItemControllerScope found in context');
     return notifier!.notifier!;
@@ -170,15 +170,15 @@ class _EditTodoItemControllerScopeState
   }
 
   @override
-  Widget build(BuildContext context) => _InheiretedEditTodoItemController(
+  Widget build(BuildContext context) => _InheritedEditTodoItemController(
         notifier: _controller,
         child: widget.child,
       );
 }
 
-class _InheiretedEditTodoItemController
+class _InheritedEditTodoItemController
     extends InheritedNotifier<EditTodoItemController> {
-  const _InheiretedEditTodoItemController({
+  const _InheritedEditTodoItemController({
     required super.child,
     required super.notifier,
   });

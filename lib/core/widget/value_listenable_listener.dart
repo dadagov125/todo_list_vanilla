@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-typedef ListenCallback<T> = ValueChanged<T>;
+typedef ListenCallback<T> = void Function(BuildContext context, T current);
 
 typedef ListenWhenCallback<T> = bool Function(T previous, T current);
 
@@ -60,7 +60,7 @@ class _ValueListenableListenerState<T>
   void _handleChange() {
     final currentValue = widget.listenable.value;
     if (widget.listenWhen?.call(_previousValue, currentValue) ?? true) {
-      widget.listen(currentValue);
+      widget.listen(context, currentValue);
     }
     _previousValue = currentValue;
   }
