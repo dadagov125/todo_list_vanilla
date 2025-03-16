@@ -21,37 +21,48 @@ class _EditTodoItemScreenState extends State<EditTodoItemScreen> {
     }
   }
 
+  bool _popWhen(AsyncS<TodoItem?> previous, AsyncS<TodoItem?> current) =>
+      (previous.isLoading && current.isInitial && current.data == null) ||
+      (previous.data != null && previous.isLoading && current.isLoaded);
+
+  void _pop(AsyncS<TodoItem?> current) {
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) => Builder(
         builder: (context) {
           final controller = EditTodoItemControllerScope.of(context);
-          return ValueListenableBuilder(
-            valueListenable: controller,
-            builder: (context, value, child) {
-              final isLoading = value.isLoading;
-              final item = value.data;
-              return Stack(
-                children: [
-                  Scaffold(
-                    body: CustomScrollView(
-                      slivers: [
-                        SliverAppBar(
-                          title: const Text('Edit todo item'),
-                          pinned: true,
-                          actions: [
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () => _removeItem(controller),
-                            ),
-                            const SizedBox(width: 16),
-                          ],
-                        ),
-                        SliverFillRemaining(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: item != null
-                                ? Form(
-                                    child: Column(
+          return ValueListenableListener(
+            listenable: controller,
+            listenWhen: _popWhen,
+            listen: _pop,
+            child: ValueListenableBuilder(
+              valueListenable: controller,
+              builder: (context, value, child) {
+                final isLoading = value.isLoading;
+                final item = value.data;
+                return Stack(
+                  children: [
+                    Scaffold(
+                      body: CustomScrollView(
+                        slivers: [
+                          SliverAppBar(
+                            title: const Text('Edit todo item'),
+                            pinned: true,
+                            actions: [
+                              IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () => _removeItem(controller),
+                              ),
+                              const SizedBox(width: 16),
+                            ],
+                          ),
+                          SliverFillRemaining(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: item != null
+                                  ? Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.stretch,
                                       spacing: 16,
@@ -86,19 +97,19 @@ class _EditTodoItemScreenState extends State<EditTodoItemScreen> {
                                           child: const Text('Save'),
                                         ),
                                       ],
-                                    ),
-                                  )
-                                : null,
+                                    )
+                                  : null,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  if (isLoading)
-                    const Center(child: CircularProgressIndicator()),
-                ],
-              );
-            },
+                    if (isLoading)
+                      const Center(child: CircularProgressIndicator()),
+                  ],
+                );
+              },
+            ),
           );
         },
       );
