@@ -11,30 +11,23 @@ class TodoListScreen extends StatefulWidget {
 }
 
 class _TodoListScreenState extends State<TodoListScreen> {
-  final _itemsController = TodoItemsController();
   final _controller = TextEditingController();
   final _dateFormat = DateFormat('DD MMM HH:mm:ss');
 
   @override
-  void initState() {
-    super.initState();
-    _itemsController.loadItems();
-  }
-
-  @override
   void dispose() {
-    _itemsController.dispose();
     super.dispose();
+    _controller.dispose();
   }
 
   void _createItem() {
     FocusManager.instance.primaryFocus?.unfocus();
-    _itemsController.addNewItem(_controller.text);
+    TodoItemsControllerScope.of(context).addNewItem(_controller.text);
     _controller.clear();
   }
 
   void _sort(TodoItemSortOption? value, TodoList todoList) {
-    _itemsController.sort(
+    TodoItemsControllerScope.of(context).sort(
       TodoItemComparator(
         sortOption: value!,
         isAscending: todoList.comparator.isAscending,
@@ -43,7 +36,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
   }
 
   void _order(TodoList todoList) {
-    _itemsController.sort(
+    TodoItemsControllerScope.of(context).sort(
       TodoItemComparator(
         sortOption: todoList.comparator.sortOption,
         isAscending: !todoList.comparator.isAscending,
@@ -111,7 +104,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
   @override
   Widget build(BuildContext context) => ValueListenableBuilder(
-        valueListenable: _itemsController,
+        valueListenable: TodoItemsControllerScope.of(context),
         builder: (context, value, child) {
           final isLoading = value.isLoading;
           final todoList = value.data;

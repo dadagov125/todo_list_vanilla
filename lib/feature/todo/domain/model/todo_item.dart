@@ -51,7 +51,7 @@ class TodoItem {
         'id': id,
         'name': name,
         'description': description,
-        'createdAt': createdAt,
+        'createdAt': createdAt.millisecondsSinceEpoch,
         'attachments': attachments,
       };
 
@@ -60,7 +60,7 @@ class TodoItem {
         id: map['id'] as int,
         name: map['name'] as String,
         description: map['description'] as String,
-        createdAt: map['createdAt'] as DateTime,
-        attachments: map['attachments'] as List<String>,
+        createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
+        attachments: (map['attachments'] as List).cast<String>(),
       );
 }

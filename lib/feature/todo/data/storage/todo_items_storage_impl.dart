@@ -62,15 +62,15 @@ class _TodoItemsRecord extends Record<List<TodoItem>> {
     if (jsonStrong == null) {
       return [];
     }
-    return json
-        .decode(jsonStrong)
-        .map((item) => TodoItem.fromJson(item))
-        .toList();
+
+    final List<dynamic> jsonList = json.decode(jsonStrong);
+    return jsonList.map((item) => TodoItem.fromJson(item)).toList();
   }
 
   @override
   Future<void> write(List<TodoItem> data) async {
-    final jsonString = json.encode(data.map((item) => item.toJson()).toList());
+    final jsonList = data.map((item) => item.toJson()).toList();
+    final jsonString = json.encode(jsonList);
     await _sharedPreferences.setString(_key, jsonString);
   }
 }
