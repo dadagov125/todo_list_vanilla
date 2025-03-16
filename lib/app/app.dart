@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:todo_list/feature/todo/presentation/screen/todo_list_screen.dart';
 import 'package:todo_list/feature/todo/todo.dart';
 
 class App extends StatelessWidget {
@@ -11,8 +10,18 @@ class App extends StatelessWidget {
         title: 'Todo list Demo',
         theme: ThemeData.light(),
         darkTheme: ThemeData.dark(),
-        home: const TodoItemsControllerScope(
-          child: TodoListScreen(),
-        ),
+        initialRoute: '/todo-items',
+        routes: {
+          '/todo-items': (context) => const TodoItemsControllerScope(
+                child: TodoListScreen(),
+              ),
+          '/edit-todo-item': (context) {
+            final itemId = ModalRoute.of(context)?.settings.arguments as int;
+            return EditTodoItemControllerScope(
+              itemId: itemId,
+              child: const EditTodoItemScreen(),
+            );
+          },
+        },
       );
 }

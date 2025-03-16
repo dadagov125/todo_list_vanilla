@@ -33,15 +33,15 @@ class TodoItemsController extends AsyncStateController<TodoList> {
 
   void loadItems() {
     addTask((setValue) async {
+      final prevState = value;
       try {
-        final prevState = value;
         setValue(AsyncS.loading(prevState));
         final items = await _getItemsUseCase.execute();
         setValue(
           AsyncS.loaded(TodoList(items: items)),
         );
       } on Object catch (e) {
-        setValue(AsyncS.error(e));
+        setValue(AsyncS.error(e, data: prevState.data));
       }
     });
   }
@@ -49,12 +49,13 @@ class TodoItemsController extends AsyncStateController<TodoList> {
   void addNewItem(String name) {
     if (name.isEmpty) return;
     addTask((setValue) async {
+      final preValue = value;
       try {
-        setValue(AsyncS.loading(value));
+        setValue(AsyncS.loading(preValue));
 
         await _createTodoItemByNameUseCase.execute(name);
       } on Object catch (e) {
-        setValue(AsyncS.error(e));
+        setValue(AsyncS.error(e, data: preValue.data));
       }
     });
   }
@@ -62,6 +63,7 @@ class TodoItemsController extends AsyncStateController<TodoList> {
   void sort(TodoItemComparator comparator) {
     addTask(
       (setValue) async {
+        final prevValue = value;
         try {
           value.mapOrNull(
             loaded: (state) {
@@ -76,7 +78,7 @@ class TodoItemsController extends AsyncStateController<TodoList> {
             },
           );
         } on Object catch (e) {
-          setValue(AsyncS.error(e));
+          setValue(AsyncS.error(e, data: prevValue.data));
         }
       },
     );

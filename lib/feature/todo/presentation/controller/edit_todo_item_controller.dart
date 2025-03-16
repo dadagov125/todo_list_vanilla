@@ -7,7 +7,9 @@ class EditTodoItemController extends AsyncStateController<TodoItem> {
     required int itemId,
     required GetTodoItemUseCase getTodoItemUseCase,
     required SaveTodoItemUseCase saveTodoItemUseCase,
-  })  : _itemId = itemId,
+    required RemoveTodoItemUseCase removeTodoItemUseCase,
+  })  : _removeTodoItemUseCase = removeTodoItemUseCase,
+        _itemId = itemId,
         _saveTodoItemUseCase = saveTodoItemUseCase,
         _getTodoItemUseCase = getTodoItemUseCase,
         super(AsyncS.initial(null));
@@ -15,6 +17,7 @@ class EditTodoItemController extends AsyncStateController<TodoItem> {
   final int _itemId;
   final GetTodoItemUseCase _getTodoItemUseCase;
   final SaveTodoItemUseCase _saveTodoItemUseCase;
+  final RemoveTodoItemUseCase _removeTodoItemUseCase;
 
   void loadItem() {
     addTask((setValue) async {
@@ -56,6 +59,22 @@ class EditTodoItemController extends AsyncStateController<TodoItem> {
       }
     });
   }
+
+  void remove() {
+    addTask((setValue) async {
+      final prevValue = value;
+
+      try {
+        final item = prevValue.data;
+        if (item == null) return;
+        setValue(AsyncS.loading(prevValue));
+        await _removeTodoItemUseCase.execute(item.id);
+        setValue(AsyncS.initial(null));
+      } on Object catch (e) {
+        setValue(AsyncS.error(e, data: prevValue.data));
+      }
+    });
+  }
 }
 
 class EditTodoItemControllerScope extends StatefulWidget {
@@ -81,11 +100,9 @@ class EditTodoItemControllerScope extends StatefulWidget {
             _InheiretedEditTodoItemController>()
         : context
             .findAncestorWidgetOfExactType<_InheiretedEditTodoItemController>();
-    if (notifier == null) {
-      throw FlutterError(
-          'TodoItemControllerScope.of was called with a context that does not contain a TodoItemControllerScope.');
-    }
-    return notifier.notifier!;
+
+    assert(notifier != null, 'No EditTodoItemControllerScope found in context');
+    return notifier!.notifier!;
   }
 }
 
@@ -101,6 +118,7 @@ class _EditTodoItemControllerScopeState
       itemId: widget.itemId,
       getTodoItemUseCase: GetTodoItemUseCase(itemsStorage: itemsStorage),
       saveTodoItemUseCase: SaveTodoItemUseCase(itemsStorage: itemsStorage),
+      removeTodoItemUseCase: RemoveTodoItemUseCase(itemsStorage: itemsStorage),
     );
     _controller.loadItem();
   }

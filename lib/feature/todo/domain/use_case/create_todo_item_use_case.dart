@@ -13,7 +13,7 @@ class CreateTodoItemByNameUseCase extends UseCase<void, String> {
   @override
   FutureOr<void> execute([String? params]) async {
     if (params == null) {
-      throw ArgumentError('Params cannot be null');
+      throw ArgumentError.notNull('params');
     }
 
     final dateTime = DateTime.now();

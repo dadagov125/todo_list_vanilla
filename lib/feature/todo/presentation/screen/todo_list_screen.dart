@@ -74,6 +74,12 @@ class _TodoListScreenState extends State<TodoListScreen> {
   }
 
   Widget _getListTile(TodoItem todoItem) => ListTile(
+        onTap: () {
+          Navigator.of(context).pushNamed(
+            '/edit-todo-item',
+            arguments: todoItem.id,
+          );
+        },
         key: ValueKey(todoItem.id),
         title: Text(
           todoItem.name,
@@ -143,6 +149,9 @@ class _TodoListScreenState extends State<TodoListScreen> {
                       children: [
                         Flexible(
                           child: TextField(
+                            onTapOutside: (_) {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            },
                             enabled: !isLoading,
                             textInputAction: TextInputAction.send,
                             controller: _controller,
