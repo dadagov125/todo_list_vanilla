@@ -156,8 +156,4 @@ class _InheritedTodoItemsController
     required super.child,
     required super.notifier,
   });
-
-  @override
-  bool updateShouldNotify(_InheritedTodoItemsController oldWidget) =>
-      oldWidget.notifier != notifier;
 }
