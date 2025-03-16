@@ -1,7 +1,7 @@
 import 'package:todo_list/core/core.dart';
 import 'package:todo_list/feature/todo/todo.dart';
 
-class AppDependencyContainers extends DependencyInitializer {
+class AppDependencyContainers extends DependencyContainer {
   AppDependencyContainers();
 
   late final CoreDependencyContainer coreDependency;
@@ -14,5 +14,11 @@ class AppDependencyContainers extends DependencyInitializer {
 
     todoDependency = TodoDependencyContainer(coreDependency: coreDependency);
     await todoDependency.initialize();
+  }
+
+  @override
+  Future<void> dispose() async {
+    await todoDependency.dispose();
+    await coreDependency.dispose();
   }
 }

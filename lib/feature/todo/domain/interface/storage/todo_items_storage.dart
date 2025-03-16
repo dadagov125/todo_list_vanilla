@@ -1,6 +1,7 @@
+import 'package:todo_list/core/core.dart';
 import 'package:todo_list/feature/todo/todo.dart';
 
-abstract class TodoItemsStorage {
+abstract class TodoItemsStorage implements Disposable {
   const TodoItemsStorage();
   Future<List<TodoItem>> getItems();
 

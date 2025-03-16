@@ -151,8 +151,8 @@ class _EditTodoItemControllerScopeState
   @override
   void initState() {
     super.initState();
-    final itemsStorage = TodoDependency.of(context).todoItemsStorage;
-    final fileService = TodoDependency.of(context).fileService;
+    final itemsStorage = TodoDependencyScope.of(context).todoItemsStorage;
+    final fileService = TodoDependencyScope.of(context).fileService;
     _controller = EditTodoItemController(
       itemId: widget.itemId,
       getTodoItemUseCase: GetTodoItemUseCase(itemsStorage: itemsStorage),

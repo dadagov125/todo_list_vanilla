@@ -126,7 +126,7 @@ class _TodoItemsControllerScopeState extends State<TodoItemsControllerScope> {
   void initState() {
     super.initState();
 
-    final itemsStorage = TodoDependency.of(context).todoItemsStorage;
+    final itemsStorage = TodoDependencyScope.of(context).todoItemsStorage;
     _controller = TodoItemsController(
       getItemsUseCase: GetTodoItemsUseCase(todoItemsStorage: itemsStorage),
       getItemsStreamUseCase:

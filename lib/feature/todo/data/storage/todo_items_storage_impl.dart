@@ -38,6 +38,11 @@ class TodoItemsStorageImpl extends TodoItemsStorage {
     await _record.remove();
     _itemsStreamController.add([]);
   }
+
+  @override
+  Future<void> dispose() async {
+    await _itemsStreamController.close();
+  }
 }
 
 class _TodoItemsRecord extends Record<List<TodoItem>> {

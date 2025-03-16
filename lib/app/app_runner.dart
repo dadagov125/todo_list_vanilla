@@ -5,12 +5,10 @@ import 'package:todo_list/feature/todo/todo.dart';
 
 class AppRunner extends StatefulWidget {
   const AppRunner({
-    required this.containers,
     required this.child,
     super.key,
   });
 
-  final AppDependencyContainers containers;
   final Widget child;
 
   @override
@@ -18,12 +16,45 @@ class AppRunner extends StatefulWidget {
 }
 
 class _AppRunnerState extends State<AppRunner> {
+  final _containers = AppDependencyContainers();
+
+  late final Future<void> _appInitializeFuture;
+
   @override
-  Widget build(BuildContext context) => CoreDependency(
-        container: widget.containers.coreDependency,
-        child: TodoDependency(
-          container: widget.containers.todoDependency,
-          child: widget.child,
-        ),
+  void initState() {
+    super.initState();
+    _appInitializeFuture = Future.wait([_containers.initialize()]);
+  }
+
+  @override
+  void dispose() {
+    _containers.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder(
+        future: _appInitializeFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const SizedBox.shrink();
+          }
+          if (snapshot.error != null) {
+            return MaterialApp(
+              home: Scaffold(
+                body: Center(
+                  child: Text('Error: ${snapshot.error}'),
+                ),
+              ),
+            );
+          }
+          return CoreDependencyScope(
+            container: _containers.coreDependency,
+            child: TodoDependencyScope(
+              container: _containers.todoDependency,
+              child: widget.child,
+            ),
+          );
+        },
       );
 }
