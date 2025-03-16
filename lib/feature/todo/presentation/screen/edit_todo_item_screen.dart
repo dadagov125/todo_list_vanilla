@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list/feature/todo/todo.dart';
 
-class EditTodoItemScreen extends StatefulWidget {
+class EditTodoItemScreen extends StatelessWidget {
   const EditTodoItemScreen({super.key});
 
-  @override
-  State<EditTodoItemScreen> createState() => _EditTodoItemScreenState();
-}
-
-class _EditTodoItemScreenState extends State<EditTodoItemScreen> {
   @override
   Widget build(BuildContext context) {
     final controller = EditTodoItemControllerScope.of(context);

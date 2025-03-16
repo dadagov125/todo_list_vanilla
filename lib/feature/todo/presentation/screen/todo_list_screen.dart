@@ -1,112 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:todo_list/core/core.dart';
 import 'package:todo_list/feature/todo/todo.dart';
 
-class TodoListScreen extends StatefulWidget {
+class TodoListScreen extends StatelessWidget {
   const TodoListScreen({super.key});
-
-  @override
-  State<TodoListScreen> createState() => _TodoListScreenState();
-}
-
-class _TodoListScreenState extends State<TodoListScreen> {
-  final _controller = TextEditingController();
-  final _dateFormat = DateFormat('DD MMM HH:mm:ss');
-
-  @override
-  void dispose() {
-    super.dispose();
-    _controller.dispose();
-  }
-
-  void _createItem() {
-    FocusManager.instance.primaryFocus?.unfocus();
-    TodoItemsControllerScope.of(context).addNewItem(_controller.text);
-    _controller.clear();
-  }
-
-  void _sort(TodoItemSortOption? value, TodoList todoList) {
-    TodoItemsControllerScope.of(context).sort(
-      TodoItemComparator(
-        sortOption: value!,
-        isAscending: todoList.comparator.isAscending,
-      ),
-    );
-  }
-
-  void _order(TodoList todoList) {
-    TodoItemsControllerScope.of(context).sort(
-      TodoItemComparator(
-        sortOption: todoList.comparator.sortOption,
-        isAscending: !todoList.comparator.isAscending,
-      ),
-    );
-  }
-
-  List<DropdownMenuItem<TodoItemSortOption>> _getMenuItems() =>
-      TodoItemSortOption.values
-          .map((item) => DropdownMenuItem(value: item, child: Text(item.name)))
-          .toList();
-
-  List<Widget> _getActions(AsyncS<TodoList> state) {
-    final todoList = state.data;
-    if (todoList == null) return [];
-    final isLoading = state.isLoading;
-    return [
-      IconButton(
-        onPressed: !isLoading ? () => _order(todoList) : null,
-        icon: Icon(
-          todoList.comparator.isAscending
-              ? Icons.arrow_downward
-              : Icons.arrow_upward,
-        ),
-      ),
-      DropdownButton(
-        value: todoList.comparator.sortOption,
-        items: _getMenuItems(),
-        onChanged: !isLoading
-            ? (TodoItemSortOption? value) => _sort(value, todoList)
-            : null,
-      ),
-      const SizedBox(width: 16),
-    ];
-  }
-
-  Widget _getListTile(TodoItem todoItem) => ListTile(
-        onTap: () {
-          Navigator.of(context).pushNamed(
-            '/edit-todo-item',
-            arguments: todoItem.id,
-          );
-        },
-        key: ValueKey(todoItem.id),
-        title: Text(
-          todoItem.name,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Text(
-          todoItem.description,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        trailing: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
-          spacing: 8,
-          children: [
-            Text(_dateFormat.format(todoItem.createdAt)),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.attach_file, size: 16),
-                Text(todoItem.attachments.length.toString()),
-              ],
-            ),
-          ],
-        ),
-      );
 
   @override
   Widget build(BuildContext context) => ValueListenableBuilder(
@@ -124,11 +20,16 @@ class _TodoListScreenState extends State<TodoListScreen> {
                       title: const Text('Todo List'),
                       centerTitle: false,
                       pinned: true,
-                      actions: _getActions(value),
+                      actions: [
+                        TodoItemsListSortButtons(
+                          state: value,
+                        ),
+                      ],
                     ),
                     SliverList(
                       delegate: SliverChildBuilderDelegate(
-                        (context, index) => _getListTile(items[index]),
+                        (context, index) =>
+                            TodoListItemTile(item: items[index]),
                         childCount: items.length,
                       ),
                     ),
@@ -140,34 +41,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
                 left: 0,
                 right: 0,
                 bottom: MediaQuery.viewInsetsOf(context).bottom,
-                child: Material(
-                  child: Container(
-                    padding: const EdgeInsets.all(24),
-                    color: Theme.of(context).colorScheme.surfaceContainer,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Flexible(
-                          child: TextField(
-                            onTapOutside: (_) {
-                              FocusManager.instance.primaryFocus?.unfocus();
-                            },
-                            enabled: !isLoading,
-                            textInputAction: TextInputAction.send,
-                            controller: _controller,
-                            decoration: const InputDecoration(
-                              hintText: 'Add new todo',
-                            ),
-                            onSubmitted: (_) => _createItem(),
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: !isLoading ? _createItem : null,
-                          icon: const Icon(Icons.send),
-                        ),
-                      ],
-                    ),
-                  ),
+                child: NewTodoItemNameInput(
+                  isLoading: isLoading,
                 ),
               ),
               if (isLoading) const Center(child: CircularProgressIndicator()),
