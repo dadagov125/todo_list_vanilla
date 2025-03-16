@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:todo_list/core/core.dart';
 import 'package:todo_list/feature/todo/todo.dart';
@@ -10,6 +12,37 @@ class EditTodoItemScreen extends StatefulWidget {
 }
 
 class _EditTodoItemScreenState extends State<EditTodoItemScreen> {
+  void _openFilePicker(EditTodoItemController controller) async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) => Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Галерея'),
+                onTap: () {
+                  controller.addFile(FileSource.gallery);
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Камера'),
+                onTap: () {
+                  controller.addFile(FileSource.camera);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _removeItem(EditTodoItemController controller) async {
     final ok = await AppAlertDialog.show(
       context: context,
@@ -28,6 +61,41 @@ class _EditTodoItemScreenState extends State<EditTodoItemScreen> {
   void _pop(AsyncS<TodoItem?> current) {
     Navigator.pop(context);
   }
+
+  Widget _getAttachments(TodoItem item, EditTodoItemController controller) =>
+      Wrap(
+        spacing: 4,
+        runSpacing: 4,
+        children: [
+          ...item.attachments.map(
+            (i) => GestureDetector(
+              onTap: () {
+                controller.removeFile(i);
+              },
+              child: Image.file(
+                File(i),
+                width: 75,
+                height: 50,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 50,
+            height: 50,
+            child: IconButton(
+              style: const ButtonStyle(
+                splashFactory: NoSplash.splashFactory,
+              ),
+              icon: const Icon(
+                Icons.attach_file,
+              ),
+              onPressed: () => _openFilePicker(
+                controller,
+              ),
+            ),
+          ),
+        ],
+      );
 
   @override
   Widget build(BuildContext context) => Builder(
@@ -91,6 +159,9 @@ class _EditTodoItemScreenState extends State<EditTodoItemScreen> {
                                             item.copyWith(description: value),
                                           ),
                                         ),
+                                        const SizedBox(height: 24),
+                                        const Text('Attachments'),
+                                        _getAttachments(item, controller),
                                         const Spacer(),
                                         FilledButton(
                                           onPressed: controller.save,

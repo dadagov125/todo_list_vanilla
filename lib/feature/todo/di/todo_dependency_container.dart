@@ -9,12 +9,14 @@ class TodoDependencyContainer extends DependencyInitializer {
   final CoreDependencyContainer _coreDependency;
 
   late final TodoItemsStorage todoItemsStorage;
+  late final FileService fileService;
 
   @override
   Future<void> initialize() async {
     todoItemsStorage = TodoItemsStorageImpl(
       sharedPreferences: _coreDependency.sharedPreferences,
     );
+    fileService = _coreDependency.fileService;
   }
 }
 

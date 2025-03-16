@@ -1,5 +1,7 @@
 import 'dart:async';
 
+export 'pick_file_use_case.dart';
+
 abstract class UseCase<Result, Params> {
   FutureOr<Result> execute([Params? params]);
 }

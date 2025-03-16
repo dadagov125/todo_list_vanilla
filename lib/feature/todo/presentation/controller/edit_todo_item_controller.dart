@@ -8,7 +8,9 @@ class EditTodoItemController extends AsyncStateController<TodoItem> {
     required GetTodoItemUseCase getTodoItemUseCase,
     required SaveTodoItemUseCase saveTodoItemUseCase,
     required RemoveTodoItemUseCase removeTodoItemUseCase,
-  })  : _removeTodoItemUseCase = removeTodoItemUseCase,
+    required PickFileUseCase pickFileUseCase,
+  })  : _pickFileUseCase = pickFileUseCase,
+        _removeTodoItemUseCase = removeTodoItemUseCase,
         _itemId = itemId,
         _saveTodoItemUseCase = saveTodoItemUseCase,
         _getTodoItemUseCase = getTodoItemUseCase,
@@ -18,6 +20,7 @@ class EditTodoItemController extends AsyncStateController<TodoItem> {
   final GetTodoItemUseCase _getTodoItemUseCase;
   final SaveTodoItemUseCase _saveTodoItemUseCase;
   final RemoveTodoItemUseCase _removeTodoItemUseCase;
+  final PickFileUseCase _pickFileUseCase;
 
   void loadItem() {
     addTask((setValue) async {
@@ -39,6 +42,41 @@ class EditTodoItemController extends AsyncStateController<TodoItem> {
       final prevValue = value;
       try {
         setValue(AsyncS.loaded(item));
+      } on Object catch (e) {
+        setValue(AsyncS.error(e, data: prevValue.data));
+      }
+    });
+  }
+
+  void addFile(FileSource source) {
+    addTask((setValue) async {
+      final prevValue = value;
+      try {
+        final file = await _pickFileUseCase.execute(source);
+        final item = prevValue.data;
+        if (file == null || item == null) {
+          return setValue(prevValue);
+        }
+        final copy = item.copyWith(
+          attachments: [...item.attachments, file.path],
+        );
+        setValue(AsyncS.loaded(copy));
+      } on Object catch (e) {
+        setValue(AsyncS.error(e, data: prevValue.data));
+      }
+    });
+  }
+
+  void removeFile(String path) {
+    addTask((setValue) async {
+      final prevValue = value;
+      try {
+        final item = prevValue.data;
+        if (item == null) return;
+        final copy = item.copyWith(
+          attachments: item.attachments.where((e) => e != path).toList(),
+        );
+        setValue(AsyncS.loaded(copy));
       } on Object catch (e) {
         setValue(AsyncS.error(e, data: prevValue.data));
       }
@@ -114,11 +152,13 @@ class _EditTodoItemControllerScopeState
   void initState() {
     super.initState();
     final itemsStorage = TodoDependency.of(context).todoItemsStorage;
+    final fileService = TodoDependency.of(context).fileService;
     _controller = EditTodoItemController(
       itemId: widget.itemId,
       getTodoItemUseCase: GetTodoItemUseCase(itemsStorage: itemsStorage),
       saveTodoItemUseCase: SaveTodoItemUseCase(itemsStorage: itemsStorage),
       removeTodoItemUseCase: RemoveTodoItemUseCase(itemsStorage: itemsStorage),
+      pickFileUseCase: PickFileUseCase(fileService: fileService),
     );
     _controller.loadItem();
   }
