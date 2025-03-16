@@ -7,20 +7,17 @@ import 'package:todo_list/feature/todo/todo.dart';
 class ItemAttachments extends StatelessWidget {
   const ItemAttachments({
     required this.item,
-    required this.controller,
     super.key,
   });
 
   final TodoItem item;
-  final EditTodoItemController controller;
 
   void _openFilePicker(
     BuildContext context,
-    EditTodoItemController controller,
   ) async {
     await showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) => Padding(
+      builder: (_) => Padding(
         padding: const EdgeInsets.all(16.0),
         child: SafeArea(
           child: Wrap(
@@ -29,7 +26,8 @@ class ItemAttachments extends StatelessWidget {
                 leading: const Icon(Icons.photo_library),
                 title: const Text('Галерея'),
                 onTap: () {
-                  controller.addFile(FileSource.gallery);
+                  EditTodoItemControllerScope.of(context)
+                      .addFile(FileSource.gallery);
                   Navigator.of(context).pop();
                 },
               ),
@@ -37,7 +35,8 @@ class ItemAttachments extends StatelessWidget {
                 leading: const Icon(Icons.camera_alt),
                 title: const Text('Камера'),
                 onTap: () {
-                  controller.addFile(FileSource.camera);
+                  EditTodoItemControllerScope.of(context)
+                      .addFile(FileSource.camera);
                   Navigator.of(context).pop();
                 },
               ),
@@ -50,18 +49,18 @@ class ItemAttachments extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    spacing: 16,
-    children: [
-      const Text('Attachments'),
-      Wrap(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: 16,
+        children: [
+          const Text('Attachments'),
+          Wrap(
             spacing: 4,
             runSpacing: 4,
             children: [
               ...item.attachments.map(
                 (i) => GestureDetector(
                   onTap: () {
-                    controller.removeFile(i);
+                    EditTodoItemControllerScope.of(context).removeFile(i);
                   },
                   child: Image.file(
                     File(i),
@@ -80,14 +79,11 @@ class ItemAttachments extends StatelessWidget {
                   icon: const Icon(
                     Icons.attach_file,
                   ),
-                  onPressed: () => _openFilePicker(
-                    context,
-                    controller,
-                  ),
+                  onPressed: () => _openFilePicker(context),
                 ),
               ),
             ],
           ),
-    ],
-  );
+        ],
+      );
 }

@@ -4,13 +4,11 @@ import 'package:todo_list/feature/todo/todo.dart';
 
 class ItemRemoveButton extends StatelessWidget {
   const ItemRemoveButton({
-    required this.controller,
     super.key,
   });
 
-  final EditTodoItemController controller;
-
   Future<void> _removeItem(BuildContext context) async {
+    final controller = EditTodoItemControllerScope.of(context);
     final ok = await AppAlertDialog.show(
       context: context,
       titleText: 'Delete item',

@@ -19,14 +19,12 @@ class EditTodoItemScreen extends StatelessWidget {
               Scaffold(
                 body: CustomScrollView(
                   slivers: [
-                    SliverAppBar(
-                      title: const Text('Edit todo item'),
+                    const SliverAppBar(
+                      title: Text('Edit todo item'),
                       pinned: true,
                       actions: [
-                        ItemRemoveButton(
-                          controller: controller,
-                        ),
-                        const SizedBox(width: 16),
+                        ItemRemoveButton(),
+                        SizedBox(width: 16),
                       ],
                     ),
                     SliverFillRemaining(
@@ -39,12 +37,10 @@ class EditTodoItemScreen extends StatelessWidget {
                                 children: [
                                   EditItemFieldsForm(
                                     item: item,
-                                    controller: controller,
                                     isLoading: isLoading,
                                   ),
                                   ItemAttachments(
                                     item: item,
-                                    controller: controller,
                                   ),
                                   const Spacer(),
                                   FilledButton(

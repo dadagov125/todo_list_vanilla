@@ -4,13 +4,11 @@ import 'package:todo_list/feature/todo/todo.dart';
 class EditItemFieldsForm extends StatelessWidget {
   const EditItemFieldsForm({
     required this.item,
-    required this.controller,
     required this.isLoading,
     super.key,
   });
 
   final TodoItem item;
-  final EditTodoItemController controller;
   final bool isLoading;
 
   @override
@@ -25,7 +23,8 @@ class EditItemFieldsForm extends StatelessWidget {
                 labelText: 'Name',
               ),
               maxLines: 2,
-              onChanged: (value) => controller.updateItem(
+              onChanged: (value) =>
+                  EditTodoItemControllerScope.of(context).updateItem(
                 item.copyWith(name: value),
               ),
             ),
@@ -36,7 +35,8 @@ class EditItemFieldsForm extends StatelessWidget {
                 labelText: 'Description',
               ),
               maxLines: 4,
-              onChanged: (value) => controller.updateItem(
+              onChanged: (value) =>
+                  EditTodoItemControllerScope.of(context).updateItem(
                 item.copyWith(description: value),
               ),
             ),
