@@ -46,4 +46,21 @@ class TodoItem {
       description.hashCode ^
       createdAt.hashCode ^
       attachments.hashCode;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'description': description,
+        'createdAt': createdAt,
+        'attachments': attachments,
+      };
+
+  // ignore: sort_constructors_first
+  factory TodoItem.fromJson(Map<String, dynamic> map) => TodoItem(
+        id: map['id'] as int,
+        name: map['name'] as String,
+        description: map['description'] as String,
+        createdAt: map['createdAt'] as DateTime,
+        attachments: map['attachments'] as List<String>,
+      );
 }

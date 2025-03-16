@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list/core/core.dart';
+import 'package:todo_list/feature/todo/todo.dart';
 
 class TodoDependencyContainer extends DependencyInitializer {
   TodoDependencyContainer({required CoreDependencyContainer coreDependency})
@@ -7,8 +8,14 @@ class TodoDependencyContainer extends DependencyInitializer {
 
   final CoreDependencyContainer _coreDependency;
 
+  late final TodoItemsStorage todoItemsStorage;
+
   @override
-  Future<void> initialize() async {}
+  Future<void> initialize() async {
+    todoItemsStorage = TodoItemsStorageImpl(
+      sharedPreferences: _coreDependency.sharedPreferences,
+    );
+  }
 }
 
 class TodoDependency extends InheritedWidget {

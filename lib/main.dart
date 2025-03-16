@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_list/app/app.dart';
 import 'package:todo_list/app/app_runner.dart';
@@ -16,7 +17,9 @@ void main() async {
       ),
     );
   }, (error, stackTrace) {
-    print('Error: $error');
-    print('Stacktrace: $stackTrace');
+    if (kDebugMode) {
+      print('Error: $error');
+      print('Stacktrace: $stackTrace');
+    }
   });
 }

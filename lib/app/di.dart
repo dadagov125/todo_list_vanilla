@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_list/core/core.dart';
 import 'package:todo_list/feature/todo/todo.dart';
 
@@ -18,5 +16,3 @@ class AppDependencyContainers extends DependencyInitializer {
     await todoDependency.initialize();
   }
 }
-
-
