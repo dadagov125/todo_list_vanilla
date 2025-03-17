@@ -28,9 +28,7 @@ class EditTodoItemController extends AsyncStateController<TodoItem> {
       try {
         setValue(AsyncS.loading(prevState));
         final item = await _getTodoItemUseCase.execute(_itemId);
-        setValue(
-          AsyncS.loaded(item),
-        );
+        setValue(AsyncS.loaded(item));
       } on Object catch (e) {
         setValue(AsyncS.error(e, data: prevState.data));
       }
@@ -57,9 +55,8 @@ class EditTodoItemController extends AsyncStateController<TodoItem> {
         if (file == null || item == null) {
           return setValue(prevValue);
         }
-        final copy = item.copyWith(
-          attachments: [...item.attachments, file.path],
-        );
+        final copy =
+            item.copyWith(attachments: [...item.attachments, file.path]);
         setValue(AsyncS.loaded(copy));
       } on Object catch (e) {
         setValue(AsyncS.error(e, data: prevValue.data));
@@ -101,7 +98,6 @@ class EditTodoItemController extends AsyncStateController<TodoItem> {
   void remove() {
     addTask((setValue) async {
       final prevValue = value;
-
       try {
         final item = prevValue.data;
         if (item == null) return;
@@ -138,7 +134,6 @@ class EditTodoItemControllerScope extends StatefulWidget {
             _InheritedEditTodoItemController>()
         : context
             .findAncestorWidgetOfExactType<_InheritedEditTodoItemController>();
-
     assert(notifier != null, 'No EditTodoItemControllerScope found in context');
     return notifier!.notifier!;
   }

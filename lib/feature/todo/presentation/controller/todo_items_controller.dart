@@ -13,17 +13,7 @@ class TodoItemsController extends AsyncStateController<TodoList> {
         _getItemsStreamUseCase = getItemsStreamUseCase,
         _getItemsUseCase = getItemsUseCase,
         super(AsyncS.initial(null)) {
-    _streamSubscription = _getItemsStreamUseCase.execute().listen((items) {
-      addTask((setValue) async {
-        final prevState = value;
-        final todoList = prevState.data ?? const TodoList(items: []);
-        final itemsCopy = [...items];
-        itemsCopy.sort(todoList.comparator.call);
-        setValue(
-          AsyncS.loaded(todoList.copyWith(items: itemsCopy)),
-        );
-      });
-    });
+    _subscribeToStream();
   }
 
   final GetTodoItemsUseCase _getItemsUseCase;
@@ -52,7 +42,6 @@ class TodoItemsController extends AsyncStateController<TodoList> {
       final preValue = value;
       try {
         setValue(AsyncS.loading(preValue));
-
         await _createTodoItemByNameUseCase.execute(name);
       } on Object catch (e) {
         setValue(AsyncS.error(e, data: preValue.data));
@@ -65,23 +54,36 @@ class TodoItemsController extends AsyncStateController<TodoList> {
       (setValue) async {
         final prevValue = value;
         try {
-          value.mapOrNull(
-            loaded: (state) {
-              final todoList = state.data;
-              final itemsCopy = [...todoList.items];
-              itemsCopy.sort(comparator.call);
-              setValue(
-                AsyncS.loaded(
-                  todoList.copyWith(items: itemsCopy, comparator: comparator),
-                ),
-              );
-            },
+          final todoList = prevValue.data;
+          if (todoList == null) {
+            return;
+          }
+          final itemsCopy = [...todoList.items];
+          itemsCopy.sort(comparator.call);
+          setValue(
+            AsyncS.loaded(
+              todoList.copyWith(items: itemsCopy, comparator: comparator),
+            ),
           );
         } on Object catch (e) {
           setValue(AsyncS.error(e, data: prevValue.data));
         }
       },
     );
+  }
+
+  void _subscribeToStream() {
+    _streamSubscription = _getItemsStreamUseCase.execute().listen((items) {
+      addTask((setValue) async {
+        final prevState = value;
+        final todoList = prevState.data ?? const TodoList(items: []);
+        final itemsCopy = [...items];
+        itemsCopy.sort(todoList.comparator.call);
+        setValue(
+          AsyncS.loaded(todoList.copyWith(items: itemsCopy)),
+        );
+      });
+    });
   }
 
   @override
@@ -111,9 +113,7 @@ class TodoItemsControllerScope extends StatefulWidget {
     } else {
       final element = context.getElementForInheritedWidgetOfExactType<
           _InheritedTodoItemsController>();
-
       assert(element != null, 'TodoItemsController not found in context');
-
       return (element!.widget as _InheritedTodoItemsController).notifier!;
     }
   }
@@ -125,7 +125,6 @@ class _TodoItemsControllerScopeState extends State<TodoItemsControllerScope> {
   @override
   void initState() {
     super.initState();
-
     final itemsStorage = TodoDependencyScope.of(context).todoItemsStorage;
     _controller = TodoItemsController(
       getItemsUseCase: GetTodoItemsUseCase(todoItemsStorage: itemsStorage),
@@ -135,7 +134,6 @@ class _TodoItemsControllerScopeState extends State<TodoItemsControllerScope> {
         todoItemsStorage: itemsStorage,
       ),
     );
-
     _controller.loadItems();
   }
 

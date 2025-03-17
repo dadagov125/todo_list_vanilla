@@ -49,9 +49,7 @@ class CoreDependencyScope extends InheritedWidget {
     } else {
       final element = context
           .getElementForInheritedWidgetOfExactType<CoreDependencyScope>();
-
-      assert(element != null, 'CoreDependency not found in context');
-
+      assert(element != null, 'CoreDependencyScope not found in context');
       return (element!.widget as CoreDependencyScope).container;
     }
   }

@@ -49,9 +49,7 @@ class TodoDependencyScope extends InheritedWidget {
     } else {
       final element = context
           .getElementForInheritedWidgetOfExactType<TodoDependencyScope>();
-
-      assert(element != null, 'TodoDependency not found in context');
-
+      assert(element != null, 'TodoDependencyScope not found in context');
       return (element!.widget as TodoDependencyScope).container;
     }
   }

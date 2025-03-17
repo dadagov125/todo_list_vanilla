@@ -30,26 +30,27 @@ class EditTodoItemScreen extends StatelessWidget {
                     SliverFillRemaining(
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
-                        child: item != null
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                spacing: 16,
-                                children: [
-                                  EditItemFieldsForm(
-                                    item: item,
-                                    isLoading: isLoading,
-                                  ),
-                                  ItemAttachments(
-                                    item: item,
-                                  ),
-                                  const Spacer(),
-                                  FilledButton(
-                                    onPressed: controller.save,
-                                    child: const Text('Save'),
-                                  ),
-                                ],
-                              )
-                            : const SizedBox(),
+                        child: Visibility(
+                          visible: item != null,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            spacing: 16,
+                            children: [
+                              EditItemFieldsForm(
+                                item: item!,
+                                isLoading: isLoading,
+                              ),
+                              ItemAttachments(
+                                item: item,
+                              ),
+                              const Spacer(),
+                              FilledButton(
+                                onPressed: controller.save,
+                                child: const Text('Save'),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ],
